@@ -36,9 +36,20 @@ class Ball:
         glVertex2f(self.x - 0.02, self.y - 0.02)
         glEnd()
 
-    def move(self):
+    def move(self, left_paddle, right_paddle):
         self.x += self.dx
         self.y += self.dy
+
+        # Collision detection with the top and bottom of the screen
+        if self.y >= 1 or self.y <= -1:
+            self.dy *= -1
+
+        # Collision detection with the paddles
+        if (self.x - 0.02 <= left_paddle.x + 0.02 and
+            left_paddle.y - 0.15 <= self.y <= left_paddle.y + 0.15) or \
+           (self.x + 0.02 >= right_paddle.x - 0.02 and
+            right_paddle.y - 0.15 <= self.y <= right_paddle.y + 0.15):
+            self.dx *= -1
 
 # Initialize Pygame and OpenGL
 pygame.init()
@@ -77,7 +88,8 @@ while running:
     # Update game objects
     left_paddle.move()
     right_paddle.move()
-    ball.move()
+    # Inside the game loop
+    ball.move(left_paddle, right_paddle)
 
     # Collision detection and response
     if ball.y >= 1 or ball.y <= -1:
